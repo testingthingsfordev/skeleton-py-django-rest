@@ -4,7 +4,7 @@ services:
     api:
         container_name: api-flask
         depends_on:
-            -   postgres-boilerplate-db
+            -   postgres-skeleton-db
         build:
             context: .
             dockerfile: docker/Dockerfile
@@ -17,8 +17,8 @@ services:
         networks:
             internal-net:
 
-    postgres-boilerplate-db:
-        container_name: postgres-boilerplate-db
+    postgres-skeleton-db:
+        container_name: postgres-skeleton-db
         image: postgres:13.4-alpine
         restart: on-failure
         volumes:
@@ -33,4 +33,4 @@ volumes:
 
 networks:
     internal-net:
-        name: rv-boilerplate-net
+        name: rv-skeleton-net

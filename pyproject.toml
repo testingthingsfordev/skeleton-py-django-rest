@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "Rviewer: Python & django boilerplate"
+name = "Rviewer: Python & django skeleton"
 version = "0.1.0"
 description = ""
 authors = ["Mauro Gómez <mgomez@getwith.io>"]
