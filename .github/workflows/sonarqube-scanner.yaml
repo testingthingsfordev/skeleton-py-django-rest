@@ -10,6 +10,7 @@ on:
       - synchronize
     branches:
       - main
+      - devel
 
 jobs:
   sonarqube:
