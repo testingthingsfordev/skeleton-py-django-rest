@@ -1,0 +1,58 @@
+on:
+  push:
+    branches:
+      - main
+      - devel
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - main
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    services:
+      postgres-skeleton-db:
+        image: postgres
+        env:
+          POSTGRES_NAME: postgres-skeleton-db
+          POSTGRES_DB: postgres_rv_database
+          POSTGRES_USER: rv_user
+          POSTGRES_PASSWORD: rv_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+
+      - name: Generate coverage
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
+          coverage run --source='api' --omit='api/tests/*' manage.py test
+          coverage report
+          coverage xml
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+          POSTGRES_NAME: localhost
+          POSTGRES_DB: postgres_rv_database
+          POSTGRES_USER: rv_user
+          POSTGRES_PASSWORD: rv_password
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
